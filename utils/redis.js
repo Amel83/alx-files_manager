@@ -1,32 +1,37 @@
-const redis = require('redis');
-const { promisify } = require('util');
-
-class RedisClient {
-  constructor() {
-    this.client = redis.createClient();
-    this.getAsync = promisify(this.client.get).bind(this.client);
-    this.client.on('error', (error) => {
-      console.log(`Redis client not connected to the server: ${error.message}`);
-    });
-  }
-
-  isAlive() {
-    return this.client.connected;
-  }
-
-  async get(key) {
-    return this.getAsync(key);
-  }
-
-  async set(key, value, duration) {
-    this.client.setex(key, duration, value);
-  }
-
-  async del(key) {
-    this.client.del(key);
-  }
-}
-
-const redisClient = new RedisClient();
-
-export default redisClient;
+module.exports = {
+  env: {
+    browser: false,
+    es6: true,
+    jest: true,
+  },
+  extends: [
+    'airbnb-base',
+    'plugin:jest/all',
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
+  },
+  parserOptions: {
+    ecmaVersion: 2018,
+    sourceType: 'module',
+  },
+  plugins: ['jest'],
+  rules: {
+    'max-classes-per-file': 'off',
+    'no-underscore-dangle': 'off',
+    'no-console': 'off',
+    'no-shadow': 'off',
+    'no-restricted-syntax': [
+      'error',
+      'LabeledStatement',
+      'withStatement',
+    ],
+  },
+  overrides:[
+    {
+      files: ['*.js'],
+      excludedFiles: 'babel.config.js',
+    }
+  ]
+};
